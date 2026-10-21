@@ -98,6 +98,11 @@ console.log("rechnen.js: alle Prüfungen bestanden");
   const f26 = R.grenzenFuer("AT", 2026);
   assert.equal(f26.vorlaeufig, false); assert.equal(f26.basisJahr, 2026);
   assert.equal(R.grenzenFuer("DE", 2024), null);
-  assert.equal(R.grenzenFuer("AT", 2030).basisJahr, 2026);
+  const at27 = R.grenzenFuer("AT", 2027);
+  assert.equal(at27.vorlaeufig, false); assert.equal(at27.g.grundfreibetrag, 1384600);
+  assert.equal(at27.g.haerteVoll, 73000);
+  const at28 = R.grenzenFuer("AT", 2028);
+  assert.equal(at28.basisJahr, 2027); assert.equal(at28.vorlaeufig, true); assert.equal(at28.voraus, null);
+  assert.equal(R.grenzenFuer("AT", 2030).basisJahr, 2027);
 }
 console.log("rechnen.js: Rückfall auf letztes Jahr geprüft");

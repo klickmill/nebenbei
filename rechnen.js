@@ -9,6 +9,8 @@
   // DE: Grundfreibetrag, Härteausgleich (§ 46 EStG), Kleinunternehmer (§ 19 UStG).
   // AT: steuerfrei bis zur ersten Tarifstufe, Veranlagungsfreibetrag (§ 41 Abs. 3
   // EStG 1988), Kleinunternehmer 55.000 € brutto mit 10 % Toleranz (UStG 1994).
+  // AT 2027 geprüft am 5.10.2026: 13.846 € laut § 33 Abs. 1 EStG 1988 in der
+  // Inflationsanpassungsverordnung 2027, BGBl. II Nr. 260/2026 vom 31.8.2026.
   var GRENZEN = {
     DE: {
       2025: { grundfreibetrag: 1209600, haerteVoll: 41000, haerteEnde: 82000, kuVorjahr: 2500000, kuLaufend: 10000000 },
@@ -16,15 +18,15 @@
     },
     AT: {
       2025: { grundfreibetrag: 1330800, haerteVoll: 73000, haerteEnde: 146000, kuVorjahr: 5500000, kuLaufend: 5500000, kuToleranz: 6050000 },
-      2026: { grundfreibetrag: 1353900, haerteVoll: 73000, haerteEnde: 146000, kuVorjahr: 5500000, kuLaufend: 5500000, kuToleranz: 6050000 }
+      2026: { grundfreibetrag: 1353900, haerteVoll: 73000, haerteEnde: 146000, kuVorjahr: 5500000, kuLaufend: 5500000, kuToleranz: 6050000 },
+      2027: { grundfreibetrag: 1384600, haerteVoll: 73000, haerteEnde: 146000, kuVorjahr: 5500000, kuLaufend: 5500000, kuToleranz: 6050000 }
     }
   };
   // Angekündigte Werte, die hier noch nicht als Grenze hinterlegt sind. Nur zur
-  // Anzeige, nie zum Rechnen. AT 2027 laut ORF-Meldung zur Verordnung; auf
-  // bmf.gv.at stand am 30.9.2026 noch kein 2027-Tarif. DE 2027 ist erst ein Entwurf.
+  // Anzeige, nie zum Rechnen. DE 2027 ist erst ein Entwurf (am 5.10.2026 noch
+  // nicht im Bundesgesetzblatt, § 32a EStG nennt nur 2026).
   var VORAUS = {
-    DE: { 2027: { grundfreibetrag: 1256400, stand: "geplant laut Entwurf der Bundesregierung vom 2.9.2026", quelle: "https://www.bundesfinanzministerium.de/Content/DE/Pressemitteilungen/Finanzpolitik/2026/09/2026-09-02-einkommensteuerreform.html" } },
-    AT: { 2027: { grundfreibetrag: 1384600, stand: "laut Verordnung des Finanzministers, plus 2,27 %", quelle: "https://orf.at/stories/3440836/" } }
+    DE: { 2027: { grundfreibetrag: 1256400, stand: "geplant laut Entwurf der Bundesregierung vom 2.9.2026", quelle: "https://www.bundesfinanzministerium.de/Content/DE/Pressemitteilungen/Finanzpolitik/2026/09/2026-09-02-einkommensteuerreform.html" } }
   };
 
   // Grenzen für ein Jahr. Fehlt das Jahr, gilt das letzte bekannte Jahr davor
@@ -48,7 +50,8 @@
     AT: [
       ["§ 41 EStG", "https://www.jusline.at/gesetz/estg/paragraf/41"],
       ["USP Kleinunternehmen", "https://www.usp.gv.at/themen/steuern-finanzen/umsatzsteuer-ueberblick/weitere-informationen-zur-umsatzsteuer/weitere-steuertatbestaende-und-befreiungen/kleinunternehmen.html"],
-      ["USP Tarifstufen", "https://www.usp.gv.at/themen/steuern-finanzen/einkommensteuer-ueberblick/weitere-informationen-est/tarifstufen.html"]
+      ["USP Tarifstufen", "https://www.usp.gv.at/themen/steuern-finanzen/einkommensteuer-ueberblick/weitere-informationen-est/tarifstufen.html"],
+      ["Inflationsanpassungsverordnung 2027", "https://www.ris.bka.gv.at/eli/bgbl/II/2026/260"]
     ]
   };
 
