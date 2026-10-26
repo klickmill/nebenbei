@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Nebenbei">
-<title>Nebenbei</title>
+<title>Nebenbei: Nebeneinkommen und Steuergrenze im Blick</title>
 <style>
   /* Kühles Neutralgrau mit Smaragd als einzigem Akzent. Rot und Bernstein sind
      keine Akzente, sondern Bedeutung: Ausgabe und Rücklage. Kontraste gegen die
@@ -65,6 +65,7 @@
 
   .kopf { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 4px 0; }
   .marke { margin: 0; font-size: 1.25rem; font-weight: 750; letter-spacing: -0.01em; }
+  .unterzeile { margin: 2px 0 0; font-size: 0.85rem; color: var(--leise); }
   .jahr { display: flex; align-items: center; gap: 4px; }
   .jahr span { min-width: 3.2em; text-align: center; font-weight: 650; }
 
@@ -154,6 +155,8 @@
   .saeule.minus { background: var(--aus); }
   .saeule.leer { background: var(--rand); }
   .monat span { font-size: 0.7rem; text-align: center; color: var(--leise); }
+  /* Sehr schmale Handys: zwölf Monatsnamen passen sonst nicht nebeneinander. */
+  @media (max-width: 360px) { .monate { grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 2px; } .monat span { font-size: 0.6rem; } }
 
   /* Quellen und Einträge */
   .quelle { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; padding: 10px 0; }
@@ -203,7 +206,10 @@
 <main class="seite">
 
   <header class="kopf">
-    <h1 class="marke">Nebenbei</h1>
+    <div>
+      <h1 class="marke">Nebenbei</h1>
+      <p class="unterzeile">Nebeneinkommen und Steuergrenze im Blick</p>
+    </div>
     <div class="jahr" aria-label="Jahr wählen">
       <button class="knopf rund" id="jahr-zurueck" type="button" aria-label="Vorheriges Jahr" data-ev="jahr_wechsel">‹</button>
       <span id="jahr" aria-live="polite"></span>
@@ -213,15 +219,18 @@
 
   <section class="karte willkommen" id="willkommen" aria-labelledby="wk-titel" hidden>
     <h2 id="wk-titel">Was bringt dein Nebenjob wirklich?</h2>
-    <p>Trag ein, was reinkommt und was rausgeht. Nebenbei zeigt dir deinen Gewinn, wie viel du fürs Finanzamt zur Seite legen solltest und wann eine Steuergrenze näher rückt.</p>
+    <p><strong>Das Problem:</strong> Verdienst du neben Job oder Studium etwas dazu, zum Beispiel mit Nachhilfe oder einem Etsy-Shop? Dann weißt du oft nicht, wie viel Gewinn du schon gemacht hast und wie nah du einer Steuergrenze bist.</p>
+    <p><strong>Die Lösung:</strong> Du trägst ein, was reinkommt und was rausgeht. Nebenbei rechnet daraus deinen Gewinn. Und es zeigt dir, wie weit du noch von einer Steuergrenze weg bist. Das ist ein Betrag, ab dem Steuer anfallen kann. Nebenbei rechnet nur mit deinen Zahlen und ersetzt keine Steuerberatung.</p>
+    <p><strong>Zuerst:</strong> Sag, wo du Steuern zahlst und ob du daneben angestellt bist.</p>
     <p class="label" id="wk-land-frage">Wo zahlst du Steuern?</p>
     <div class="umschalter" role="radiogroup" aria-labelledby="wk-land-frage" style="margin-bottom:14px">
       <input type="radio" name="wk-land" id="wk-de" value="DE" checked><label for="wk-de">Deutschland</label>
       <input type="radio" name="wk-land" id="wk-at" value="AT"><label for="wk-at">Österreich</label>
     </div>
     <p class="label">Hast du daneben einen festen Job als Angestellte oder Angestellter?</p>
+    <p class="klein leise" style="margin:-4px 0 8px">Davon hängt ab, welche Steuergrenze Nebenbei dir zeigt.</p>
     <div class="knopfreihe">
-      <button class="knopf haupt" type="button" id="wk-ja" data-ev="start_angestellt">Ja, angestellt</button>
+      <button class="knopf" type="button" id="wk-ja" data-ev="start_angestellt">Ja, angestellt</button>
       <button class="knopf" type="button" id="wk-nein" data-ev="start_selbststaendig">Nein</button>
     </div>
   </section>
@@ -236,6 +245,7 @@
       <dt id="rueck-label" class="oben">Zur Seite legen</dt><dd class="rueck oben" id="rueck"></dd>
       <dt>Frei verfügbar</dt><dd id="frei"></dd>
     </dl>
+    <p class="klein leise" style="margin:10px 0 0">Gewinn heißt: Einnahmen minus Ausgaben. „Zur Seite legen“ ist der Betrag, den du mit deinem eigenen Prozentsatz zurücklegst, damit Geld für die Steuer da ist. Wie viel Steuer du wirklich zahlst, rechnet Nebenbei nicht aus. „Frei verfügbar“ ist der Gewinn minus diesen Betrag. Den Prozentsatz stellst du in den Einstellungen ein.</p>
   </section>
 
   <section class="karte" aria-labelledby="neu-titel">
@@ -248,7 +258,7 @@
       <div class="feld">
         <label for="betrag">Betrag</label>
         <div class="betrag-wrap">
-          <input type="text" id="betrag" inputmode="decimal" autocomplete="off" placeholder="0,00" aria-describedby="betrag-fehler">
+          <input type="text" id="betrag" inputmode="decimal" autocomplete="off" placeholder="z. B. 120,50" aria-describedby="betrag-fehler">
           <span aria-hidden="true">€</span>
         </div>
         <p class="fehler" id="betrag-fehler" role="alert" hidden></p>
@@ -276,7 +286,7 @@
   <section class="karte" aria-labelledby="grenzen-titel">
     <h2 id="grenzen-titel">Steuergrenzen</h2>
     <div id="grenzen"></div>
-    <p class="klein leise" style="margin:14px 0 0">Keine Steuerberatung. Die Werte helfen dir beim Überblick, im Zweifel fragst du eine Steuerberatung. Quellen: <span id="quellen-links"></span>.</p>
+    <p class="klein leise" style="margin:14px 0 0">Nebenbei ersetzt keine Steuerberatung. Die Werte helfen dir beim Überblick. Bist du unsicher, frag eine Steuerberaterin oder einen Steuerberater. Quellen: <span id="quellen-links"></span>.</p>
   </section>
 
   <section class="karte" aria-labelledby="monate-titel">
@@ -286,7 +296,7 @@
   </section>
 
   <section class="karte" aria-labelledby="quellen-titel">
-    <h2 id="quellen-titel">Nach Quelle</h2>
+    <h2 id="quellen-titel">Summen nach Wofür oder woher</h2>
     <div id="quellen"></div>
   </section>
 
@@ -304,9 +314,10 @@
           <input type="range" id="satz" min="0" max="50" step="1">
           <output for="satz" id="satz-wert"></output>
         </div>
-        <p class="klein leise">Das ist dein eigener Faustwert zum Sparen, keine Steuerberechnung. Wie viel Steuer wirklich anfällt, hängt von deinem ganzen Einkommen ab.</p>
+        <p class="klein leise">Das ist dein eigener Prozentsatz zum Zurücklegen, keine Steuerberechnung. Wie viel Steuer wirklich anfällt, hängt von deinem ganzen Einkommen ab.</p>
       </div>
       <div class="feld" style="margin-bottom:12px">
+        <p class="klein leise" style="margin:0 0 6px">Land und Job sind dieselben Fragen wie beim Start. Hier kannst du die Antworten ändern.</p>
         <span class="label" id="land-frage">Land für die Steuergrenzen</span>
         <div class="umschalter" role="radiogroup" aria-labelledby="land-frage">
           <input type="radio" name="land" id="land-de" value="DE"><label for="land-de">Deutschland</label>
@@ -315,22 +326,22 @@
       </div>
       <label class="haken" for="angestellt">
         <input type="checkbox" id="angestellt">
-        <span>Ich habe daneben einen festen Job als Angestellte oder Angestellter. Dann zeigt Nebenbei die Grenze für Nebeneinkünfte neben dem Gehalt statt des steuerfreien Grundbetrags.</span>
+        <span>Ich habe daneben einen festen Job als Angestellte oder Angestellter. Dann zeigt Nebenbei die Grenze für Nebeneinkommen neben dem Gehalt. Ohne festen Job zeigt es, bis zu welchem Einkommen im Jahr keine Einkommensteuer anfällt.</span>
       </label>
       <div class="knopfreihe">
-        <button class="knopf" type="button" id="export" data-ev="export_csv">Als Tabelle sichern (CSV)</button>
+        <button class="knopf" type="button" id="export" data-ev="export_csv">Als Tabelle sichern (für Excel)</button>
         <button class="knopf" type="button" id="import" data-ev="import_csv">Sicherung einspielen</button>
         <input type="file" id="import-datei" accept=".csv,text/csv" hidden>
         <button class="knopf gefahr" type="button" id="alles-loeschen" data-ev="alles_loeschen">Alle Daten löschen</button>
       </div>
-      <p class="klein leise" style="margin:10px 0 0">Deine Einträge liegen nur in diesem Browser auf diesem Gerät. Sichere sie ab und zu als Tabelle, sonst sind sie weg, wenn du die Browserdaten löschst. Mit „Sicherung einspielen“ holst du sie auf ein neues Gerät; was schon da ist, kommt nicht doppelt.</p>
+      <p class="klein leise" style="margin:10px 0 0">Deine Einträge liegen nur in diesem Browser auf diesem Gerät. Löschst du die Daten des Browsers, sind sie weg. Sichere sie deshalb ab und zu mit „Als Tabelle sichern“. Die Datei kannst du auch mit Excel öffnen, zum Beispiel als Überblick für deine Steuererklärung. Mit „Sicherung einspielen“ holst du die Einträge aus dieser Datei zurück, auch auf ein neues Gerät. Was schon da ist, kommt nicht doppelt.</p>
     </details>
   </section>
 
   <section class="karte" aria-labelledby="beta-titel">
-    <h2 id="beta-titel">Du testest Nebenbei mit</h2>
-    <p>Nebenbei ist eine <strong>Testfassung</strong>. Sie läuft im Browser, damit wir ohne Umweg über einen App-Store schnell verbessern können. In den Play Store und den App Store geht sie erst, wenn du und viele andere sie gern nutzen.</p>
-    <p>Wenn sie dir hilft: <strong>teile sie</strong>. Und sag uns, was fehlt oder stört. So bauen wir sie mit dir zusammen weiter.</p>
+    <h2 id="beta-titel">Das ist eine Testfassung</h2>
+    <p>Nebenbei ist noch eine <strong>Testfassung</strong>. Du nutzt sie im Browser, ohne App-Store und ohne Konto. In die App-Stores kommt sie erst, wenn viele sie gern nutzen.</p>
+    <p>Hilft sie dir? Dann teile sie gern. Und sag uns, was fehlt oder stört.</p>
     <div class="feld" style="gap:10px">
       <button class="knopf" id="beta-teilen" type="button" data-ev="teilen_app">App teilen</button>
       <label class="label" for="beta-text">Dein Feedback</label>
@@ -339,18 +350,21 @@
       <input class="beta-feld" id="beta-kontakt" type="text" maxlength="200" autocomplete="off" placeholder="E-Mail oder leer lassen">
       <button class="knopf" id="beta-senden" type="button">Feedback senden</button>
       <p class="klein" id="beta-stand" role="status" aria-live="polite" hidden></p>
-      <p class="klein leise" style="margin:0">Dein Feedback geht an uns (klickmill.app), ohne IP-Adresse und ohne Kennung. Deine Einträge schicken wir nie mit. Mehr dazu im <a href="datenschutz.html">Datenschutz</a>.</p>
+      <p class="klein leise" style="margin:0">Dein Feedback geht an uns, die Macher von Nebenbei (klickmill.app). Wir speichern dabei weder deine IP-Adresse, also die Internet-Anschrift deines Geräts, noch eine andere Kennung. Deine E-Mail sehen wir nur, wenn du sie selbst einträgst. Deine Einträge schicken wir nie mit. Mehr dazu im <a href="datenschutz.html">Datenschutz</a>.</p>
     </div>
   </section>
 
   <section class="karte" aria-labelledby="ueber-titel">
     <h2 id="ueber-titel">Was diese App nach außen schickt</h2>
-    <p>Deine Einträge bleiben in diesem Browser auf deinem Gerät. Nach außen gehen genau zwei Dinge, beide an klickmill.app: ein anonymer Zähler (App-Start und gedrückte Knöpfe, ohne Kennung, ohne Cookie) und dein Feedback, wenn du es oben abschickst. Sonst nichts: kein Konto, keine Werbung, keine fremden Skripte oder Schriften.</p>
+    <p>Deine Einträge bleiben in diesem Browser auf deinem Gerät. Nur zwei Dinge gehen an uns (klickmill.app):</p>
+    <p><strong>Ein Nutzungszähler.</strong> Er meldet, dass die App geöffnet wurde und welche der wichtigsten Knöpfe gedrückt wurden. Er weiß nicht, wer du bist, und setzt kein Cookie, also keine kleine Datei zum Wiedererkennen.</p>
+    <p><strong>Dein Feedback</strong>, aber nur, wenn du es selbst abschickst.</p>
+    <p>Sonst nichts. Es gibt kein Konto und keine Werbung. Die App lädt auch nichts von anderen Firmen nach, keine Programme und keine Schriftarten.</p>
     <label class="haken" for="zaehler-aus" style="margin-top:8px">
       <input type="checkbox" id="zaehler-aus">
-      <span>Zähler abschalten. Dann zählt dieses Gerät nicht mehr mit. Der Schalter bleibt nur hier gespeichert.</span>
+      <span>Zähler abschalten. Dann meldet dieser Browser keine App-Starts und Knöpfe mehr.</span>
     </label>
-    <p class="leise" style="margin-top:10px">Version 1.3 vom 22.10.2026 · <a href="aenderungen.html">Was sich geändert hat</a> · <a href="https://github.com/klickmill/nebenbei" target="_blank" rel="noopener noreferrer">Quellcode</a></p>
+    <p class="leise" style="margin-top:10px">Version 1.4 vom 26.10.2026 · <a href="aenderungen.html">Was sich geändert hat</a> · <a href="https://github.com/klickmill/nebenbei" target="_blank" rel="noopener noreferrer">Quellcode (für Entwickler)</a></p>
   </section>
   <footer class="fuss">
     <a href="impressum.html">Impressum</a> · <a href="datenschutz.html">Datenschutz</a>
@@ -467,8 +481,8 @@
 
   // Texte je Land. Zahlen kommen aus R.GRENZEN, damit sie an einer Stelle stehen.
   var LAND = {
-    DE: { name: "Deutschland", grundTitel: "Grundfreibetrag", grundWort: "Grundfreibetrag", abzuege: "Versicherungen", zusatz: " Ein Minijob zählt hier nicht mit." },
-    AT: { name: "Österreich", grundTitel: "Steuerfreies Einkommen", grundWort: "erste Tarifstufe", abzuege: "Sozialversicherung", zusatz: "" }
+    DE: { name: "Deutschland", grundTitel: "Grundfreibetrag", grundSatz: " Diese Grenze heißt Grundfreibetrag.", abzuege: "Versicherungen", zusatz: " Ein Minijob zählt hier nicht mit." },
+    AT: { name: "Österreich", grundTitel: "Steuerfreies Einkommen", grundSatz: " In Österreich reicht bis zu dieser Grenze die erste Tarifstufe, also der Teil des Einkommens ohne Einkommensteuer.", abzuege: "Sozialversicherung", zusatz: "" }
   };
 
   function renderGrenzen(s) {
@@ -508,7 +522,10 @@
       var pflichtig = R.haerteSteuerpflichtig(Math.max(0, gewinn), g);
       var text;
       if (gewinn <= g.haerteVoll) {
-        text = "Bis " + voll + " Gewinn im Jahr bleibt dein Nebeneinkommen steuerfrei. Dir fehlen noch " + R.euro(g.haerteVoll - Math.max(0, gewinn)) + " bis zur Grenze." + L.zusatz;
+        // Beispiel aus derselben Formel wie im Fall darüber, keine neue Zahl.
+        // Drei Viertel des Wegs, auf 10 € gerundet: beim Mittelwert käme genau die untere Grenze heraus.
+        var bsp = Math.round((g.haerteVoll + (g.haerteEnde - g.haerteVoll) * 0.75) / 1000) * 1000;
+        text = "Bis " + voll + " Gewinn im Jahr bleibt dein Nebeneinkommen steuerfrei. Bis zur Grenze sind es noch " + R.euro(g.haerteVoll - Math.max(0, gewinn)) + ". Darüber, bis " + ende + ", wird nur ein Teil versteuert. Beispiel: Bei " + R.euro(bsp).replace(",00", "") + " Gewinn werden " + R.euro(R.haerteSteuerpflichtig(bsp, g)).replace(",00", "") + " davon versteuert." + L.zusatz;
       } else if (gewinn <= g.haerteEnde) {
         text = "Über " + voll + " musst du eine Steuererklärung abgeben. Bis " + ende + " wird nur ein Teil versteuert, bei dir " + R.euro(pflichtig) + ".";
       } else {
@@ -519,7 +536,7 @@
     } else {
       var rest = g.grundfreibetrag - Math.max(0, gewinn);
       var t2 = rest > 0
-        ? "Ist das dein einziges Einkommen, bleiben bis " + R.euro(g.grundfreibetrag) + " im Jahr steuerfrei (" + L.grundWort + "). Grob gerechnet fehlen dir noch " + R.euro(rest) + ", " + L.abzuege + " und andere Abzüge nicht eingerechnet."
+        ? "Ist das dein einziges Einkommen, bleiben bis " + R.euro(g.grundfreibetrag) + " im Jahr steuerfrei." + L.grundSatz + " Bis dahin sind es grob gerechnet noch " + R.euro(rest) + ". " + L.abzuege + " und andere Abzüge sind dabei nicht eingerechnet."
         : "Du liegst über " + R.euro(g.grundfreibetrag) + ". Ab hier fällt Einkommensteuer an.";
       box.appendChild(grenzblock(L.grundTitel + " " + jahr, t2, gewinn, g.grundfreibetrag, rest > 0 ? "" : "warn", ["0 €", R.euro(g.grundfreibetrag)]));
     }
@@ -527,11 +544,11 @@
     var vorjahr = R.summen(daten.eintraege, jahr - 1).ein;
     var t3, kuKlasse;
     if (daten.land === "AT") {
-      t3 = "Als Kleinunternehmer stellst du Rechnungen ohne Umsatzsteuer, solange dein Umsatz im Jahr 55.000 € brutto nicht überschreitet, auch im Vorjahr nicht. Überschreitest du die Grenze um höchstens 10 % (bis 60.500 €), gilt die Befreiung noch bis zum Jahresende.";
+      t3 = "Kleinunternehmer heißt: Auf deine Rechnungen kommt keine Umsatzsteuer, auch Mehrwertsteuer genannt. Das gilt, solange dein Umsatz im Jahr höchstens 55.000 € brutto beträgt, auch im Vorjahr. Überschreitest du die Grenze um höchstens 10 % (bis 60.500 €), gilt die Befreiung noch bis zum Jahresende. Als Umsatz zählt Nebenbei alle Einnahmen, ohne die Ausgaben abzuziehen.";
       kuKlasse = s.ein > g.kuToleranz || vorjahr > g.kuVorjahr ? "voll" : s.ein > g.kuLaufend ? "warn" : "";
       if (vorjahr > 0) t3 += " Dein Umsatz " + (jahr - 1) + " laut Nebenbei: " + R.euro(vorjahr) + (vorjahr > g.kuVorjahr ? ", also über 55.000 €." : ".");
     } else {
-      t3 = "Als Kleinunternehmer stellst du Rechnungen ohne Umsatzsteuer, solange dein Umsatz in diesem Jahr 100.000 € nicht überschreitet und im Vorjahr höchstens 25.000 € war. Im Jahr, in dem du anfängst, gelten eigene Regeln.";
+      t3 = "Kleinunternehmer heißt: Auf deine Rechnungen kommt keine Umsatzsteuer, auch Mehrwertsteuer genannt. Das gilt, solange dein Umsatz in diesem Jahr höchstens 100.000 € beträgt und im Vorjahr höchstens 25.000 € war. Im Jahr, in dem du anfängst, gelten eigene Regeln, die Nebenbei nicht zeigt. Als Umsatz zählt Nebenbei alle Einnahmen, ohne die Ausgaben abzuziehen.";
       kuKlasse = s.ein > g.kuLaufend || vorjahr > g.kuVorjahr ? "voll" : s.ein > g.kuVorjahr ? "warn" : "";
       if (vorjahr > 0) t3 += " Dein Umsatz " + (jahr - 1) + " laut Nebenbei: " + R.euro(vorjahr) + (vorjahr > g.kuVorjahr ? ", also über 25.000 €." : ".");
     }
