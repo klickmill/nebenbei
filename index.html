@@ -186,6 +186,14 @@
   .knopfreihe { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
 
   .willkommen { border-color: var(--akzent); }
+  /* Erster Bildschirm nach dem Muster von Klartext: Alltagsfrage groß, ein Hauptknopf in voller Breite, mehr Luft. */
+  .frage { margin: 0 0 14px; font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; }
+  .einstieg p { line-height: 1.55; margin-bottom: 12px; }
+  .knopf.breit { display: block; width: 100%; min-height: 52px; }
+  /* Die Frage zum Job bleibt unten im Bild, solange die Karte zu sehen ist: sonst liegt der erste Knopf unter dem Rand. */
+  .wk-frage { position: sticky; bottom: 0; z-index: 5; background: var(--card); padding: 10px 0 calc(10px + env(safe-area-inset-bottom)); border-top: 1px solid var(--rand); }
+  .wk-frage .knopfreihe { margin-top: 8px; flex-wrap: nowrap; }
+  .wk-frage .knopf { flex: 1; }
   .beta-feld { min-height: 48px; }
   textarea { min-height: 96px; resize: vertical; }
 
@@ -217,21 +225,23 @@
     </div>
   </header>
 
-  <section class="karte willkommen" id="willkommen" aria-labelledby="wk-titel" hidden>
-    <h2 id="wk-titel">Was bringt dein Nebenjob wirklich?</h2>
+  <section class="karte willkommen einstieg" id="willkommen" aria-labelledby="wk-titel" hidden>
+    <h2 class="frage" id="wk-titel">Wie nah ist dein Nebenverdienst an der Steuergrenze?</h2>
     <p><strong>Das Problem:</strong> Verdienst du neben Job oder Studium etwas dazu, zum Beispiel mit Nachhilfe oder einem Etsy-Shop? Dann weißt du oft nicht, wie viel Gewinn du schon gemacht hast und wie nah du einer Steuergrenze bist.</p>
     <p><strong>Die Lösung:</strong> Du trägst ein, was reinkommt und was rausgeht. Nebenbei rechnet daraus deinen Gewinn. Und es zeigt dir, wie weit du noch von einer Steuergrenze weg bist. Das ist ein Betrag, ab dem Steuer anfallen kann. Nebenbei rechnet nur mit deinen Zahlen und ersetzt keine Steuerberatung.</p>
     <p><strong>Zuerst:</strong> Sag, wo du Steuern zahlst und ob du daneben angestellt bist.</p>
-    <p class="label" id="wk-land-frage">Wo zahlst du Steuern?</p>
-    <div class="umschalter" role="radiogroup" aria-labelledby="wk-land-frage" style="margin-bottom:14px">
-      <input type="radio" name="wk-land" id="wk-de" value="DE" checked><label for="wk-de">Deutschland</label>
-      <input type="radio" name="wk-land" id="wk-at" value="AT"><label for="wk-at">Österreich</label>
-    </div>
-    <p class="label">Hast du daneben einen festen Job als Angestellte oder Angestellter?</p>
-    <p class="klein leise" style="margin:-4px 0 8px">Davon hängt ab, welche Steuergrenze Nebenbei dir zeigt.</p>
-    <div class="knopfreihe">
-      <button class="knopf" type="button" id="wk-ja" data-ev="start_angestellt">Ja, angestellt</button>
-      <button class="knopf" type="button" id="wk-nein" data-ev="start_selbststaendig">Nein</button>
+    <p class="klein leise" style="margin:0 0 8px">Land und Job entscheiden, welche Steuergrenze Nebenbei dir zeigt.</p>
+    <div class="wk-frage">
+      <p class="label" id="wk-land-frage" style="margin:0 0 6px">Wo zahlst du Steuern?</p>
+      <div class="umschalter" role="radiogroup" aria-labelledby="wk-land-frage" style="margin-bottom:10px">
+        <input type="radio" name="wk-land" id="wk-de" value="DE" checked><label for="wk-de">Deutschland</label>
+        <input type="radio" name="wk-land" id="wk-at" value="AT"><label for="wk-at">Österreich</label>
+      </div>
+      <p class="label" style="margin:0">Hast du daneben einen festen Job als Angestellte oder Angestellter?</p>
+      <div class="knopfreihe">
+        <button class="knopf" type="button" id="wk-ja" data-ev="start_angestellt">Ja, angestellt</button>
+        <button class="knopf" type="button" id="wk-nein" data-ev="start_selbststaendig">Nein</button>
+      </div>
     </div>
   </section>
 
@@ -364,7 +374,7 @@
       <input type="checkbox" id="zaehler-aus">
       <span>Zähler abschalten. Dann meldet dieser Browser keine App-Starts und Knöpfe mehr.</span>
     </label>
-    <p class="leise" style="margin-top:10px">Version 1.4 vom 26.10.2026 · <a href="aenderungen.html">Was sich geändert hat</a> · <a href="https://github.com/klickmill/nebenbei" target="_blank" rel="noopener noreferrer">Quellcode (für Entwickler)</a></p>
+    <p class="leise" style="margin-top:10px">Version 1.5 vom 29.10.2026 · <a href="aenderungen.html">Was sich geändert hat</a> · <a href="https://github.com/klickmill/nebenbei" target="_blank" rel="noopener noreferrer">Quellcode (für Entwickler)</a></p>
   </section>
   <footer class="fuss">
     <a href="impressum.html">Impressum</a> · <a href="datenschutz.html">Datenschutz</a>
@@ -391,15 +401,29 @@
   var BASIS = "https://klickmill.app";
   // Zähler-Schalter: liegt nur in diesem Browser, wird vor jedem Ping gelesen.
   var ZAEHLER_AUS = "nebenbei-zaehler-aus";
-  function zaehlerAus() {
+  // Gespeicherte Wahl, gilt ab dem nächsten Start.
+  function zaehlerGespeichertAus() {
     try { return localStorage.getItem(ZAEHLER_AUS) === "1"; } catch (e) { return false; }
+  }
+  // In der laufenden Sitzung zählt das Kästchen selbst: lässt der Browser kein Speichern zu,
+  // bleibt der Zähler trotzdem aus, solange die Seite offen ist.
+  function zaehlerAus() {
+    var box = document.getElementById("zaehler-aus");
+    return box ? box.checked : zaehlerGespeichertAus();
   }
   (function () {
     var box = document.getElementById("zaehler-aus");
     if (!box) return;
-    box.checked = zaehlerAus();
+    var text = box.nextElementSibling, normal = text ? text.textContent : "";
+    box.checked = zaehlerGespeichertAus();
     box.addEventListener("change", function () {
-      try { localStorage.setItem(ZAEHLER_AUS, box.checked ? "1" : "0"); } catch (e) {}
+      var geklappt = true;
+      try {
+        if (box.checked) localStorage.setItem(ZAEHLER_AUS, "1"); else localStorage.removeItem(ZAEHLER_AUS);
+      } catch (e) { geklappt = false; }
+      if (text) text.textContent = !geklappt && box.checked
+        ? "Zähler aus, aber nur, bis du die Seite schließt. Dein Browser lässt das Speichern nicht zu."
+        : normal;
     });
   })();
   function ping(ev) {
@@ -664,6 +688,7 @@
     $("rueck").textContent = R.euro(rueck);
     $("frei").textContent = R.euro(s.gewinn - rueck);
     $("willkommen").hidden = daten.angestellt !== null;
+    document.querySelector(".kopf .jahr").hidden = !$("willkommen").hidden; // Jahrespfeile erst nach dem Start
     $("satz").value = daten.satz;
     $("satz-wert").textContent = daten.satz + " %";
     $("angestellt").checked = daten.angestellt !== false;
@@ -797,7 +822,7 @@
     if (!confirm("Alle Einträge und Einstellungen auf diesem Gerät löschen? Das lässt sich nicht rückgängig machen.")) return;
     try { localStorage.removeItem(SPEICHER); } catch (e) {}
     try { localStorage.removeItem(ZAEHLER_AUS); } catch (e) {}
-    var zb = document.getElementById("zaehler-aus"); if (zb) zb.checked = false;
+    var zb = document.getElementById("zaehler-aus"); if (zb) { zb.checked = zaehlerGespeichertAus(); zb.dispatchEvent(new Event("change")); } // auch den Satz daneben zurücksetzen
     daten = laden();
     render();
     zeigeHinweis("Alles gelöscht.");
